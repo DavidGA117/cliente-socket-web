@@ -1,50 +1,50 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Socket Chat</title>
     <script type="module">
-        // Importar el módulo de socket.io desde el CDN
         import { io } from 'https://cdn.socket.io/4.7.4/socket.io.esm.min.js';
 
-        // Conectar al servidor de WebSockets en la dirección IP local y puerto 3000
-        const socket = io('https://e4c9-2806-104e-3-182e-b137-e3c0-ae19-68f0.ngrok.io', {
+        const socket = io('http://127.0.0.1:3000', {
             auth: {
                 serverOffset: 0
             }
         });
 
-        // Seleccionamos los elementos del DOM necesarios
+
         const form = document.getElementById('form');
         const input = document.getElementById('input');
         const messages = document.getElementById('messages');
 
-        // Pedir nombre de usuario mediante un prompt
+        // Desplegamos un prompt para que el usuario ingrese su nombre, sin la capacidad de que el usuario pueda cancelar el prompt
         const username = prompt('Ingrese su nombre de usuario');
         if (!username) {
             location.reload();
         }
-
         // Asignamos el nombre de usuario al socket
         socket.auth.username = username;
 
-        // Escuchar los mensajes del servidor y mostrarlos en la lista
         socket.on('chat message', (msg, serverOffset, username) => {
+            // Creamos un item que despliegue en un li el mensaje que se envió junto con el nombre de usuario
             const item = `<li>${username}: ${msg}</li>`;
+
             messages.insertAdjacentHTML('beforeend', item);
             socket.auth.serverOffset = serverOffset;
         });
 
-        // Manejar el envío de mensajes cuando se envía el formulario
-        form.addEventListener('submit', function(e) {
+        form.addEventListener('submit', function (e) {
             e.preventDefault();
 
             if (input.value) {
                 socket.emit('chat message', input.value, username);
-                input.value = ''; // Limpiar el campo de texto después de enviar el mensaje
+                input.value = '';
             }
         });
+
+
     </script>
     <style>
         *,
@@ -52,9 +52,11 @@
         *::after {
             box-sizing: border-box;
         }
+
         :root {
             color-scheme: light dark;
         }
+
         body {
             margin: 0;
             font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
@@ -63,7 +65,9 @@
             height: 100vh;
             padding: 36px;
             grid-template-rows: 1fr;
+
         }
+
         #messages {
             list-style: none;
             padding: 0;
@@ -71,12 +75,15 @@
             overflow-y: auto;
             height: 100%;
         }
-        #messages > li {
+
+        #messages>li {
             padding: .5rem 1rem;
         }
-        #messages > li:nth-child(odd) {
+
+        #messages>li:nth-child(odd) {
             background-color: #f8f9fa8c;
         }
+
         #chat {
             border: 1px solid #ccc;
             border-radius: 4px;
@@ -85,6 +92,7 @@
             height: 100%;
             position: relative;
         }
+
         #form {
             bottom: 0;
             display: flex;
@@ -97,17 +105,21 @@
             width: 100%;
             right: 0;
         }
+
         #input {
+
             border-radius: 9999px;
             border: 1px solid #eee;
             flex: 1;
             margin: 4px;
             padding: 0 8px;
         }
+
         #input:focus {
             outline: none;
         }
-        #form > button {
+
+        #form>button {
             background-color: #007bff;
             border: none;
             border-radius: 9999px;
@@ -118,15 +130,25 @@
         }
     </style>
 </head>
+
 <body>
 
     <section id="chat">
+
         <ul id="messages"></ul>
+
+
         <form id="form">
-            <input type="text" name="message" id="input" placeholder="Escribe un mensaje" autocomplete="off">
+
+            <input type="text" name="message" id="input" placeholder="Type a message" autocomplete="off">
             <button type="submit">Enviar</button>
-        </form> 
+
+        </form>
+
     </section>
 
+
+
 </body>
+
 </html>
