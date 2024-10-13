@@ -8,12 +8,22 @@
     <script type="module">
         import { io } from 'https://cdn.socket.io/4.7.4/socket.io.esm.min.js';
 
+        // Intenta conectar al servidor de socket
         const socket = io('https://serversocketweb.onrender.com', {
             auth: {
                 serverOffset: 0
             }
         });
 
+        // Manejar la conexión al socket
+        socket.on('connect', () => {
+            console.log('Conectado al servidor Socket.IO');
+        });
+
+        // Manejar errores de conexión
+        socket.on('connect_error', (error) => {
+            console.error('Error de conexión:', error);
+        });
 
         const form = document.getElementById('form');
         const input = document.getElementById('input');
@@ -26,8 +36,11 @@
         }
         // Asignamos el nombre de usuario al socket
         socket.auth.username = username;
+        console.log(`Nombre de usuario establecido: ${username}`);
 
+        // Escuchar los mensajes de chat
         socket.on('chat message', (msg, serverOffset, username) => {
+            console.log(`Mensaje recibido de ${username}: ${msg}`);
             // Creamos un item que despliegue en un li el mensaje que se envió junto con el nombre de usuario
             const item = `<li>${username}: ${msg}</li>`;
 
@@ -39,11 +52,18 @@
             e.preventDefault();
 
             if (input.value) {
+                console.log(`Enviando mensaje: ${input.value}`);
                 socket.emit('chat message', input.value, username);
                 input.value = '';
+            } else {
+                console.log('No se puede enviar un mensaje vacío');
             }
         });
 
+        // Manejar desconexiones
+        socket.on('disconnect', () => {
+            console.log('Desconectado del servidor Socket.IO');
+        });
 
     </script>
     <style>
@@ -137,7 +157,6 @@
 
         <ul id="messages"></ul>
 
-
         <form id="form">
 
             <input type="text" name="message" id="input" placeholder="Type a message" autocomplete="off">
@@ -146,8 +165,6 @@
         </form>
 
     </section>
-
-
 
 </body>
 
